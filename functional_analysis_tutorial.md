@@ -1,4 +1,4 @@
-Functional analysis tutorial
+Functional analysis tutorial - MARData-BU
 ================
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
@@ -19,7 +19,6 @@ November 26, 2024
     interpret my functional analysis results?</a>
     -   <a href="#41-gsea" id="toc-41-gsea">4.1 GSEA</a>
         -   <a href="#411-excel-file" id="toc-411-excel-file">4.1.1 Excel file</a>
-        -   <a href="#412-images" id="toc-412-images">4.1.2 Images</a>
     -   <a href="#42-ora" id="toc-42-ora">4.2 ORA</a>
         -   <a href="#421-excel-file" id="toc-421-excel-file">4.2.1 Excel file</a>
         -   <a href="#422-images" id="toc-422-images">4.2.2 Images</a>
@@ -102,7 +101,7 @@ and murine gene sets from several databases. Some examples are:
     MSigDB collections and retaining genes that display coordinate
     expression (Liberzon et al. 2015).
 
-<img src="../Images/msigdb.png" width="1584" />
+![MSigDb](https://github.com/MARData-BU/Tutorials/raw/main/Images/msigdb.png)
 
 # 3 Statistics behind the functional analyses
 
@@ -262,9 +261,8 @@ downregulated. Each sheet contains the following columns:
     in negatively enriched gene sets (NES \< 0) in increasing order of
     importance.
 
-<img src="../Images/enrichment_score.jpg" width="431" />
-
-### 4.1.2 Images
+![Enrichment_score](https://github.com/MARData-BU/Tutorials/raw/main/Images/enrichment_score.jpg)
+\### Images
 
 The most common plots for the GSEA are the following:
 
@@ -277,7 +275,7 @@ The most common plots for the GSEA are the following:
     comparison (cases), whether a negative value corresponds to an
     enrichment in the second condition of the comparison (controls).
 
-<img src="../Images/GSEA_barplot_example.png" width="3000" />
+![Barplot](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_barplot_example.png)
 
 -   **Dotplots**: enriched functional pathways are displayed in the Y
     axis on the left. The dot’s color shows the FDR of each term
@@ -286,7 +284,7 @@ The most common plots for the GSEA are the following:
     horizontal axis (gene ratio) quantifies the proportion of the
     pathway’s genes in the analysis relative to its total gene count.
 
-<img src="../Images/GSEA_dotplot_example.png" width="2700" />
+![Dotplot](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_dotplot_example.png)
 
 -   **Enrichment maps**: nodes represent gene-sets and edges represents
     mutual overlap. Highly redundant gene-sets are grouped together as
@@ -294,7 +292,7 @@ The most common plots for the GSEA are the following:
     whereas its size represents the gene count that contributes to the
     enrichment of that pathway.
 
-<img src="../Images/GSEA_enrichment_map_example.png" width="2400" />
+![Enrichment_map](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_enrichment_map_example.png)
 
 ## 4.2 ORA
 
@@ -339,7 +337,7 @@ the following:
     horizontal axis (gene ratio) quantifies the proportion of the
     pathway’s genes in the analysis relative to its total gene count.
 
-<img src="../Images/GSEA_dotplot_example.png" width="2700" />
+![Dotplot](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_dotplot_example.png)
 
 -   **Enrichment maps**: nodes represent gene-sets and edges represents
     mutual overlap. Highly redundant gene-sets are grouped together as
@@ -347,7 +345,7 @@ the following:
     whereas its size represents the gene count that contributes to the
     enrichment of that pathway.
 
-<img src="../Images/GSEA_enrichment_map_example.png" width="2400" />
+![Enrichment_map](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_enrichment_map_example.png)
 
 # 5 References
 
