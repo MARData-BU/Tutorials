@@ -9,26 +9,6 @@ Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 November 26, 2024
 
--   <a
-    href="#1-introduction-to-functional-analysis-in-gene-expression-studies"
-    id="toc-1-introduction-to-functional-analysis-in-gene-expression-studies">1
-    Introduction to Functional Analysis in Gene Expression Studies</a>
--   <a href="#2-databases" id="toc-2-databases">2 Databases</a>
--   <a href="#3-statistics-behind-the-functional-analyses"
-    id="toc-3-statistics-behind-the-functional-analyses">3 Statistics behind
-    the functional analyses</a>
-    -   <a href="#31-gsea" id="toc-31-gsea">3.1 GSEA</a>
-    -   <a href="#32-ora" id="toc-32-ora">3.2 ORA</a>
--   <a href="#4-how-do-i-interpret-my-functional-analysis-results"
-    id="toc-4-how-do-i-interpret-my-functional-analysis-results">4 How do I
-    interpret my functional analysis results?</a>
-    -   <a href="#41-gsea" id="toc-41-gsea">4.1 GSEA</a>
-        -   <a href="#411-excel-file" id="toc-411-excel-file">4.1.1 Excel file</a>
-    -   <a href="#42-ora" id="toc-42-ora">4.2 ORA</a>
-        -   <a href="#421-excel-file" id="toc-421-excel-file">4.2.1 Excel file</a>
-        -   <a href="#422-images" id="toc-422-images">4.2.2 Images</a>
--   <a href="#5-references" id="toc-5-references">5 References</a>
-
 # 1 Introduction to Functional Analysis in Gene Expression Studies
 
 In gene expression studies, functional analysis is a critical approach
