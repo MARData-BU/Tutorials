@@ -1,3 +1,8 @@
+---
+layout: default
+title: Functional analysis tutorial - MARData-BU
+---
+
 Functional analysis tutorial - MARData-BU
 ================
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar

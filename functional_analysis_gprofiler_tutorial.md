@@ -1,3 +1,8 @@
+---
+layout: default
+title: Online functional analysis tutorial with g:Profiler - MARData-BU
+---
+
 Online functional analysis tutorial with g:Profiler - MARData-BU
 ================
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
