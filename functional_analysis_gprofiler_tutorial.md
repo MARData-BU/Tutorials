@@ -32,7 +32,7 @@ processes, or molecular functions are most affected by the changes
 observed in gene expression, offering a more holistic view of the
 underlying biology.
 
-In this tutorial, we’ll focus on one method for functional
+In this tutorial, we’ll focus on two primary methods for functional
 analysis in the context of DGE results:
 
 -   **Pre-Ranked Gene Set Enrichment Analysis (GSEA)**: the pre-ranked
