@@ -43,41 +43,9 @@
       height: auto;
     }
 
-    /* Table of Contents styling */
-    .toc a {
-      display: block;
-      padding: 5px 0;
-      text-decoration: none;
-    }
-    .toc a:hover {
-      background-color: #f0f0f0;
-    }
-
-    /* Smooth scrolling */
-    html {
-      scroll-behavior: smooth;
-    }
   </style>
 </head>
 <body>
-
-  <div class="container my-5">
-    <!-- Sidebar -->
-    <div class="sidebar">
-      <h3>Table of Contents</h3>
-      <ul class="toc">
-        {% assign content = page.content %}
-        {% assign lines = content | split: "\n" %}
-        {% for line in lines %}
-          {% if line[0] == "#" %}
-            {% assign heading = line | strip_html %}
-            {% assign anchor = heading | downcase | replace: ' ', '-' %}
-            <li><a href="#{{ anchor }}">{{ heading }}</a></li>
-          {% endif %}
-        {% endfor %}
-      </ul>
-    </div>
-
     <!-- Main Content -->
     <div class="content">
       <header>
