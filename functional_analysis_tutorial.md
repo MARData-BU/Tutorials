@@ -3,8 +3,6 @@ layout: default_mod
 title: Functional analysis tutorial - MARData-BU
 ---
 
-{% toc %}
-
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 November 26, 2024
