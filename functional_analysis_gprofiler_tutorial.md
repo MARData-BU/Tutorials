@@ -3,7 +3,6 @@ layout: default_mod
 title: Online functional analysis tutorial with g:Profiler - MARData-BU
 ---
 
-================
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 January 7, 2025
