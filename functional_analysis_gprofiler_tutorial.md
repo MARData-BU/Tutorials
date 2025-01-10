@@ -7,7 +7,7 @@ Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 January 7, 2025
 
-# 1 Introduction to Functional Analysis in Gene Expression Studies {#introduction}
+# 1 Introduction to Functional Analysis in Gene Expression Studies
 
 In gene expression studies, functional analysis is a critical approach
 for understanding the biological meaning behind differential gene
@@ -57,7 +57,7 @@ analysis in the context of DGE results:
 By following this tutorial, you’ll learn how to run and interpret a functional
 analysis given your set of results in g:Profiler.
 
-# 2 g:Profiler online tool {#gprofiler}
+# 2 g:Profiler online tool
 
 g:Profiler is an online tool that allows users to perform functional enrichment
 analyses integrating many databases, organisms and analysis options. It was first
@@ -102,7 +102,7 @@ The detailed results section displays all pathways for each database. It allows 
 
 The "GO Context" section displays the relationships between the pathways in those databases that are hierarchical. Lastly, "Query Info" section displays all parameters set for the specific query.
 
-# 3 References {#references}
+# 3 References
 
 - <a id="gprofiler_2007"></a>Reimand J, Kull M, Peterson H, Hansen J, Vilo J. g:Profiler--a web-based toolset for functional profiling of gene lists from large-scale experiments. *Nucleic Acids Research*. 2007 Jul;35(Web Server issue):W193-200. doi: [10.1093/nar/gkm226](https://doi.org/10.1093/nar/gkm226). Epub 2007 May 3. PMID: [17478515](https://pubmed.ncbi.nlm.nih.gov/17478515); PMCID: [PMC1933153](https://www.ncbi.nlm.nih.gov/pmc/articles/PMC1933153/).
 
