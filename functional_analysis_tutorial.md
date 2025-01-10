@@ -5,7 +5,7 @@ title: Functional analysis tutorial - MARData-BU
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
-November 26, 2024
+January 10, 2025
 
 # 1 Introduction to Functional Analysis in Gene Expression Studies
 
