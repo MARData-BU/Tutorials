@@ -1,5 +1,5 @@
 ---
-layout: default
+layout: default_mod
 title: Functional analysis tutorial - MARData-BU
 ---
 
