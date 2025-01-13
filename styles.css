@@ -1,4 +1,79 @@
+/* General page styling */
 body {
-  background: #d3d3d3;
+  margin: 0;
+  padding: 0;
+  background: #f4f4f9; /* Softer background color */
+  color: #333; /* Darker text color for readability */
+  font-family: Arial, sans-serif; /* Clean and modern font */
+  line-height: 1.6; /* Improve readability */
   text-align: justify;
 }
+
+/* Center and style the header */
+h1 {
+  display: flex; /* Align title and image side-by-side */
+  align-items: center; /* Vertically center content */
+  justify-content: center; /* Center content horizontally */
+  margin: 20px 0;
+  color: #1e3a8a; /* Corporate blue color for the title */
+  font-size: 2.5em; /* Larger, prominent title */
+}
+
+/* Styling for the corporate image */
+.corporate-image {
+  border-radius: 50%; /* Circular shape */
+  width: 100px; /* Set a size for the image */
+  height: 100px;
+  margin-right: 20px; /* Space between the image and the title */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a soft shadow */
+  border: 3px solid #1e3a8a; /* Optional border to match title color */
+}
+
+/* Style for links */
+a {
+  color: #1e3a8a; /* Match the corporate theme */
+  text-decoration: none; /* Remove underline */
+}
+
+a:hover {
+  text-decoration: underline; /* Add underline on hover for clarity */
+}
+
+/* Paragraph styling */
+p {
+  margin: 10px 20px;
+  font-size: 1.1em;
+}
+
+/* Style for the tutorial list */
+h2 {
+  text-align: center;
+  margin-top: 40px;
+  font-size: 2em;
+  color: #1e3a8a;
+}
+
+ul {
+  list-style: none; /* Remove bullet points */
+  padding: 0;
+}
+
+ul li {
+  margin: 10px 0;
+  font-size: 1.1em;
+}
+
+ul li a {
+  color: #007acc; /* Brighter blue for links in the list */
+}
+
+ul li a:hover {
+  text-decoration: underline; /* Highlight links on hover */
+}
+
+/* Add some spacing around the content */
+body > * {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
