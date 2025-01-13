@@ -1,6 +1,6 @@
 ---
 layout: default_mod
-title: Functional analysis tutorial - MARData-BU
+title: Understand and interpret functional analyses
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
