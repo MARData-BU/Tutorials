@@ -1,6 +1,6 @@
 ---
 layout: default_mod
-title: Online functional analysis tutorial with g:Profiler - MARData-BU
+title: How to run your own functional analysis with g:Profiler
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
