@@ -3,7 +3,7 @@ body {
   margin: 0;
   padding: 0;
   background: #f4f4f9; /* Softer background color */
-  color: #333; /* Darker text color for readability */
+  color: #000000; /* Darker text color for readability */
   font-family: Arial, sans-serif; /* Clean and modern font */
   line-height: 1.6; /* Improve readability */
   text-align: justify;
