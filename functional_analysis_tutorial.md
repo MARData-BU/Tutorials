@@ -1,13 +1,14 @@
 ---
 layout: default_mod
 title: Understand and interpret functional analyses
+toc: true
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 January 10, 2025
 
-# 1 Introduction to Functional Analysis in Gene Expression Studies
+# 1. Introduction to Functional Analysis in Gene Expression Studies
 
 In gene expression studies, functional analysis is a critical approach
 for understanding the biological meaning behind differential gene
@@ -61,7 +62,7 @@ offers unique insights, and by the end of this tutorial, you’ll be able
 to apply these methods effectively to gain a deeper understanding of the
 functional implications of your gene expression data.
 
-# 2 Databases
+# 2. Databases
 
 In order to run a functional analysis, one needs to provide information
 regarding the pathways (and the genes within it) that will be tested.
@@ -85,7 +86,7 @@ and murine gene sets from several databases. Some examples are:
 
 ![MSigDb](https://github.com/MARData-BU/Tutorials/raw/main/Images/msigdb.png)
 
-# 3 Statistics behind the functional analyses
+# 3. Statistics behind the functional analyses
 
 ## 3.1 GSEA
 
@@ -176,7 +177,7 @@ up/down regulated genes given a specific threshold).
     gene set, ORA applies methods to control for multiple hypothesis
     testing, typically using the false discovery rate (FDR).
 
-# 4 How do I interpret my functional analysis results?
+# 4. How do I interpret my functional analysis results?
 
 As a summary, results can be divided in two groups: images and Excel
 files. While images are the most user-friendly and visual way to see
@@ -329,7 +330,7 @@ the following:
 
 ![Enrichment_map](https://github.com/MARData-BU/Tutorials/raw/main/Images/GSEA_enrichment_map_example.png)
 
-# 5 References
+# 5. References
 
 - <a id="KEGG_2019"></a>Kanehisa, Minoru. Toward understanding the origin and evolution of cellular organisms. *Protein Science*. 2019;28(11):1947-1951. doi: [10.1002/pro.3715](https://doi.org/10.1002/pro.3715).
 
