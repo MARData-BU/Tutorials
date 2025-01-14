@@ -1,6 +1,6 @@
 ---
 layout: default_mod
-title: How to run your own functional analysis with g:Profiler
+title: <span class="title-underline">How to run your own functional analysis with g:Profiler</span>
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar

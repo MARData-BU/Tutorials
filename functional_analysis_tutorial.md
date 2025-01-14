@@ -1,6 +1,6 @@
 ---
 layout: default_mod
-title: Understand and interpret functional analyses
+title: <span class="title-underline">Understand and interpret functional analyses</span>
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
