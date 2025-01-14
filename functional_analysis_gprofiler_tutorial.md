@@ -61,8 +61,8 @@ analysis given your set of results in g:Profiler.
 
 g:Profiler is an online tool that allows users to perform functional enrichment
 analyses integrating many databases, organisms and analysis options. It was first
-released in 2007 [Reimand et al., 2007](#gprofiler_2007) and has received many updates
-[Kolberg et al., 2023](#gprofiler_2023). It provides a user-friendly interface
+released in 2007 ([Reimand et al., 2007](#gprofiler_2007)) and has received many updates
+([Kolberg et al., 2023](#gprofiler_2023)). It provides a user-friendly interface
 that facilitates the analysis without the requirement of a prior bioinformatic knowledge.
 
 The user needs to provide a whitespaced-separated gene list (you can directly
