@@ -7,7 +7,7 @@ Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 January 7, 2025
 
-{::toc}
+{% include toc.html %}
 
 # 1. Introduction to Functional Analysis in Gene Expression Studies
 

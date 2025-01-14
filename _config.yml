@@ -1,5 +1,6 @@
 markdown: kramdown
 kramdown:
-  syntax_highlighter_opts:
-    disable : true
-  toc_levels: 1..6 # levels of headers to include in the TOC
+  input: GFM
+  toc_levels: 1..6
+plugins:
+  - jekyll-toc
