@@ -27,7 +27,7 @@ Samples are typically color-coded according to a specific condition, providing a
 The results from a DGE analysis include a list of genes with corresponding p-values, fold-change (FC), log2(FC), and adjusted p-values. The number of differentially expressed genes depends on the thresholds you decide to apply. Naturally, the stricter the filter, the more reliable the results.
 
 -   **p-value**: p-value obtained with the moderated t-test ([Ritchie et al., 2015](#Ritchie_2015)). It indicates the statistical significance of the result.
--   **adjusted p-value**: adjusted p-value for multiple comparisons ([Benjamini and Hochberg, 1995](#Benjamini_Hochberg_1995))(Benjamini and Hochberg 1995).
+-   **adjusted p-value**: adjusted p-value for multiple comparisons ([Benjamini and Hochberg, 1995](#Benjamini_Hochberg_1995)).
 -   **fold-change**: the value represents the 2^ transformation of the log2 fold-change field.
 -   **log2 fold-change**: the log2 difference between the mean expression levels of the two groups (i.e., the mean of the first group minus the mean of the second group).
 
