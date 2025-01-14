@@ -7,8 +7,6 @@ Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
 Research Institute)
 January 7, 2025
 
-{% include toc.html %}
-
 # 1. Introduction to Functional Analysis in Gene Expression Studies
 
 In gene expression studies, functional analysis is a critical approach
