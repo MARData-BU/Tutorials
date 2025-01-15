@@ -59,7 +59,7 @@ analysis given your set of results in g:Profiler.
 
 # 2. g:Profiler online tool
 
-g:Profiler is an online tool that allows users to perform functional enrichment
+[g:Profiler](https://biit.cs.ut.ee/gprofiler/gost) is an online tool that allows users to perform functional enrichment
 analyses integrating many databases, organisms and analysis options. It was first
 released in 2007 ([Reimand et al., 2007](#gprofiler_2007)) and has received many updates
 ([Kolberg et al., 2023](#gprofiler_2023)). It provides a user-friendly interface
@@ -68,7 +68,7 @@ that facilitates the analysis without the requirement of a prior bioinformatic k
 The user needs to provide a whitespaced-separated gene list (you can directly
 copy the genes from an Excel file, for example) and set the organism that will be
 used for the analysis (Human as default), as well as whether the query is ordered
-or not, which will direct the analysis towards a GSEA or an ORA, respectively.
+or not, which will direct the analysis towards a GSEA-like or an ORA, respectively.
 In the former case, elements are to be arranged in **decreasing** order of importance
 (e.g: down-regulated to up-regulated). Results of ordered queries in g:Profiler
 should not be treated as p-values. Instead, users should only infer whether genes
