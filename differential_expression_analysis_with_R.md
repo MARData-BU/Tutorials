@@ -1,6 +1,6 @@
 ---
 layout: default_mod
-title: <span class="title-underline">How to run your own RNA-seq differential expression analysis from a Count table</span>
+title: <span class="title-underline">How to run your own RNA-seq differential expression analysis from a Counts table with R</span>
 ---
 
 Pau Berenguer-Molins, Júlia Perera-Bel (MARData-BU, Hospital del Mar
