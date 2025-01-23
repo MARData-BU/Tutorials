@@ -59,4 +59,9 @@ Once you have all packages installed, simply load them running the "library" fun
 library("gplots") # change "gplots" for any other package
 ```
 
+# 3. First steps: reading and filtering your counts table
+
+
+
+
 **WARNING: THIS TUTORIAL IS STILL UNDER CONSTRUCTION.**
