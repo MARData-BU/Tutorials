@@ -69,12 +69,12 @@ Your table of counts may contain relevant information for each of the genes, suc
 
 ```
 # Read table of Counts
-counts <- read.table(file="path_to_file/Counts_example.txt"), sep="\t", header=T, dec=".", stringsAsFactors = F)
+counts <- read.table(file="path_to_file/Counts_example.txt", sep="\t", header=T, dec=".", stringsAsFactors = F)
 rownames(counts) <- counts$Geneid # ensure gene names are set as rownames
 
 # Print the first 2 rows of Counts table
 head(counts, 2)
-                    Geneid  Chr   Start     End Strand Length KO_A1 KO_A2 KO_A3 KO_B1 KO_B2 KOB3 WT_A1 WT_A2 WT_A3 WT_B1 WT_B2
+                    Geneid  Chr   Start     End Strand Length KO_A1 KO_A2 KO_A3 KO_B1 KO_B2 KO_B3 WT_A1 WT_A2 WT_A3 WT_B1 WT_B2
 4933401J01Rik 4933401J01Rik chr1 3143476 3144545      +   1070     0     0     0     0     0    0     0     0     0     0     0
 Gm26206             Gm26206 chr1 3172239 3172348      +    110     0     0     0     0     0    0     0     0     0     0     0
 
@@ -118,7 +118,7 @@ all.equal(rownames(counts.m.f), annot.m.f$Geneid) # check that the gene names ar
 
 ## 3.4 Data normalization
 
-For this next step, you will need to have package [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html) ([Robinson, McCarthy and Smyth, 2010](#edgeR1), [McCarthy, Chen and Smyth,2012](#edgeR2), [Chen, Lun and Smyth, 2016](#edgeR3)) installed and loaded. Data normalization involves:
+For this next step, you will need to have package edgeR ([Robinson, McCarthy and Smyth, 2010](#edgeR1), [McCarthy, Chen and Smyth,2012](#edgeR2), [Chen, Lun and Smyth, 2016](#edgeR3)) installed and loaded. Data normalization involves:
 
 -     **1**: transforming the table of counts in a DGEList object (edgeR object).
 -     **2**: calculating scaling factors for each sample to convert raw library sizes (total number of counts) into effective library sizes with *calcNormFactors()* function. In our case, we will use the trimmed mean of M values (TMM) method ([Robinson and Oshlack, 2010](#TMM)), which computes normalization factors that represent sample-specific biases given their total counts. These factors are then multiplied by the library size to generate the effective library size.
@@ -131,6 +131,66 @@ Norm.Factor <- calcNormFactors(d, method="TMM") # compute normalization factors
 cpm.matrx <- cpm(Norm.Factor, log=T, prior.count=3) # calculate log2CPM
 cpm.matrx.nonlog <- cpm(Norm.Factor, log=F) # calculate CPM
 ```
+
+## 3.5 QC plots
+
+In order to assess the overall behavior of the samples and check whether there is any batch effect - or else the biological effect can already be seen - several plots can be generated to assess the samples given the expression of all the genes (already filtered). It is advisable to create a dataframe in which you have the samples linked to their known conditions (both the condition that wants to be assessed and other conditions that may be affecting the results, such as sex, age, BMI, batch, technician, etc.). In this example we will only focus in our experimental condition. Another possible option rather than creating a dataframe is to directly create a vector with the conditions. This is less advisable, as it is easier to mismatch the samples with their conditions.
+
+Please note that the order in which the conditions are displayed must match the sample order in the *cpm.matrx* object.
+
+```
+targets
+   Sample Condition
+1   KO_A1      KO_A
+2   KO_A2      KO_A
+3   KO_A3      KO_A
+4   KO_B1      KO_B
+5   KO_B2      KO_B
+6   KO_B3      KO_B
+7   WT_A1      WT_A
+8   WT_A2      WT_A
+9   WT_A3      WT_A
+10  WT_B1      WT_B
+11  WT_B2      WT_B
+
+all.equal(targets$Sample ,colnames(cpm.matrx)) # check that sample names in cpm.matrx and targets objects are in the same order
+[1] TRUE
+
+c(rep("KO_A", 3), rep ("KO_B", 3), rep ("WT_A", 3), rep("WT_B", 2))
+ [1] "KO_A" "KO_A" "KO_A" "KO_B" "KO_B" "KO_B" "WT_A" "WT_A" "WT_A" "WT_B" "WT_B"
+```
+
+The recommended plots for gaining an overview of the data are dendrograms, PCAs, and MDS plots. Despite being generated using different methodologies, all three types of plots are interpreted similarly: the closer two samples are, the more similar they are in terms of gene expression. Conversely, the farther apart they are, the less similar they are. Samples are color-coded according to a specific condition, providing an initial view of how the samples behave. This also helps identify batch effects or the influence of other variables apart from the variable of interest.
+
+```
+library(QualityGraphs)
+library(RColorBrewer)
+
+# DENDROGRAMS
+clusterdend(est_noctrls=cpm.matrx, conditions=targets$Condition, picname="Condition", resDir=file.path(resultsDir, "QC_Plots"))
+
+# PCAs
+makePCA(est_noctrls=cpm.matrx, conditions=t![dendrograms](https://github.com/MARData-BU/Tutorials/raw/main/Images/pca_dendrogram_mds.png)
+argets$Condition, picname="Condition", resDir=file.path(resultsDir, "QC_Plots"), dist = 2)
+
+# 2D PCAs
+makePCA.2D(est_noctrls=cpm.matrx, conditions=targets$Condition, picname="Condition", resDir=file.path(resultsDir, "QC_Plots"), dist = 0)
+
+# MDS  Plots
+COLOR <- c('KO_A'='#1b9e77', 'KO_B' = '#d95f02', 'WT_A' = '#67639f', 'WT_B' = '#e7298a')
+png(file.path(resultsDir, "MDS_Condition.png"), units="in",  width=12, height=8, res=200)
+conditions <- factor(targets$Condition)  #to be used as block-variable
+plotMDS(cpm.matrx, label=targets$Sample,
+        col=COLOR[conditions])
+legend("topleft", legend=levels(conditions), pch=15, col=COLOR, ncol=1)
+dev.off()
+
+```
+
+As you can see on the plots below, sample *KO_A2* appears as an outlier, which indicates that this sample displays a gene expression quite different than the rest of the samples. In some situations, this could lead to the elimination of this sample from the analysis. You can also see that samples from the WT_B group tend to cluster together, as well as WT_A samples and KO_B samples. 
+
+![dendrograms](https://github.com/MARData-BU/Tutorials/raw/main/Images/pca_dendrogram_mds_example.png)
+
 
 
 
