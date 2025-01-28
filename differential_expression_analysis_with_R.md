@@ -53,44 +53,96 @@ library(devtools)
 install_github("MARData-BU/QualityGraphs") # change "QualityGraphs" for any other MARData-BU package
 ```
 
-Once you have all packages installed, simply load them running the "library" function:
+Once you have all packages installed, simply load them running the *library()* function:
 
 ```
 library("gplots") # change "gplots" for any other package
 ```
 
-# 3. First steps: reading and filtering your counts table
+# 3. First steps
 
-How to read your counts table will depend on its file type. If you have an xlsx file, you can use read.xlsx(*path_to_file*) from openxlsx package. If you have a csv or tsv file, you can simply read the Counts table using read.table(*path_to_file*, sep = *specify separation in file*). This table of counts should have samples as columns and genes as rows. If that is not your case, you can always transpose the table by using t(*table_of_counts*).
+## 3.1 Reading the table of counts
+
+How to read your counts table will depend on its file type. If you have an xlsx file, you can use *read.xlsx(path_to_file)* from openxlsx package. If you have a csv or tsv file, you can simply read the Counts table using *read.table(path_to_file, sep = specify separation in file)*. This table of counts should have samples as columns and genes as rows. If that is not your case, you can always transpose the table by using *t(table_of_counts)*.
 
 Your table of counts may contain relevant information for each of the genes, such as the chromosome, the start and end position, the length and the strand. If that is the case, save this information in another R object, as you may want to retrieve it after.
 
 ```
 # Read table of Counts
 counts <- read.table(file="path_to_file/Counts_example.txt"), sep="\t", header=T, dec=".", stringsAsFactors = F)
+rownames(counts) <- counts$Geneid # ensure gene names are set as rownames
 
 # Print the first 2 rows of Counts table
 head(counts, 2)
-         Geneid  Chr   Start     End Strand Length KO_A1 KO_A2 KO_A3 KO_B1 KO_B2 KOB3 WT_A1 WT_A2 WT_A3 WT_B1 WT_B2
-1 4933401J01Rik chr1 3143476 3144545      +   1070     0     0     0     0     0    0     0     0     0     0     0
-2       Gm26206 chr1 3172239 3172348      +    110     0     0     0     0     0    0     0     0     0     0     0
+                    Geneid  Chr   Start     End Strand Length KO_A1 KO_A2 KO_A3 KO_B1 KO_B2 KOB3 WT_A1 WT_A2 WT_A3 WT_B1 WT_B2
+4933401J01Rik 4933401J01Rik chr1 3143476 3144545      +   1070     0     0     0     0     0    0     0     0     0     0     0
+Gm26206             Gm26206 chr1 3172239 3172348      +    110     0     0     0     0     0    0     0     0     0     0     0
 
 # Split the gene information and counts information into two separate objects
 Annot.RNAseq <- counts[,c(1:6)] # gene information
 counts.m <- counts[,7:length(counts)] # Counts
 ```
 
+## 3.2 Initial quality check
+
 Before running any analysis, it is advisable to perform some checks over the data.
 
 -   Check the total counts per sample.
 -   Check sequencing depth consistency by comparing the maximum and minimum values of total counts.
 
-If the sequencing depth is reasonably consistent across the RNA samples, then the simplest and most robust approach to differential expression is to use limma-trend approach, where counts are converted to logCPM (log2-counts-per-million). This approach will usually work well if the ratio of the largest library size to the smallest is not more than about 3-fold.
+If the sequencing depth is reasonably consistent across the RNA samples, then the simplest and most robust approach to differential expression is to use limma-trend approach, where counts are converted to logCPM (log2-counts-per-million). This approach will usually work well if the ratio of the largest library size to the smallest is not more than about 3-fold. In this case, the tutorial will focus on limma package ([Ritchie et al., 1995](#limma)).
 
 ```
 sample.totals <- apply(counts.m, 2, sum) # calculate the sum (total counts) for each sample (each column)
 range(sample.totals) # retrieve the range of total counts in samples
+[1] 80730737 95226607
 max(sample.totals)/min(sample.totals)
+[1] 1.179558
 ```
+
+## 3.3 Counts table filtering
+
+In order remove the effect those genes that are lowly expressed (either genes with a low expression, or genes that are expressed in few samples) it is advisable to filter out those genes that have 10 or less counts in the N of the smallest group in your analysis. In our case, we have 3 KO_A samples, 3 KO_B samples, 3 WT_A samples and 2 WT_B samples, so it would be advisable to remove those genes with 10 or less counts in less than 2 samples. Again considering our case, we move from 56,791 genes to 17,423 genes after filtering.
+
+```
+dim(counts.m) # check the dimensions of the counts table
+[1] 56791    11
+keep <- rowSums(counts.m>10) >= 2 # keep those genes with more than 10 counts in 2 or more samples
+counts.m.f <- counts.m[keep,] # filter the counts table
+dim(counts.m.f) # check the dimensions of the new counts table
+[1] 17432    11
+annot.m.f <- Annot.RNAseq[match(rownames(counts.m.f), Annot.RNAseq$Geneid),] # filter the annotations table
+all.equal(rownames(counts.m.f), annot.m.f$Geneid) # check that the gene names are in the same order in the counts and annotation tables
+[1] TRUE
+```
+
+## 3.4 Data normalization
+
+For this next step, you will need to have package [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html) ([Robinson, McCarthy and Smyth, 2010](#edgeR1), [McCarthy, Chen and Smyth,2012](#edgeR2), [Chen, Lun and Smyth, 2016](#edgeR3)) installed and loaded. Data normalization involves:
+
+-     **1**: transforming the table of counts in a DGEList object (edgeR object).
+-     **2**: calculating scaling factors for each sample to convert raw library sizes (total number of counts) into effective library sizes with *calcNormFactors()* function. In our case, we will use the trimmed mean of M values (TMM) method ([Robinson and Oshlack, 2010](#TMM)), which computes normalization factors that represent sample-specific biases given their total counts. These factors are then multiplied by the library size to generate the effective library size.
+-     **3**: compute the counts per million (CPM) and log2CPM with *cpm()* function. The *prior.count* argument is required when log-transforming the CPM. This value is the average count to be added to each observation (each gene per each sample) to avoid taking log of 0.
+
+```
+library(edgeR)
+d <- DGEList(counts=counts.m.f) # transform table of counts into DGEList
+Norm.Factor <- calcNormFactors(d, method="TMM") # compute normalization factors
+cpm.matrx <- cpm(Norm.Factor, log=T, prior.count=3) # calculate log2CPM
+cpm.matrx.nonlog <- cpm(Norm.Factor, log=F) # calculate CPM
+```
+
+
+
+# References
+
+- <a id="limma"></a>Ritchie ME, Phipson B, Wu D, Hu Y, Law CW, Shi W, Smyth GK. limma powers differential expression analyses for RNA-sequencing and microarray studies. *Nucleic Acids Research*. 2015;43(7):e47. doi: [10.1093/nar/gkv007](https://doi.org/10.1093/nar/gkv007).
+- <a id="edgeR1"></a>Robinson MD, McCarthy DJ, Smyth GK. edgeR: a Bioconductor package for differential expression analysis of digital gene expression data. *Bioinformatics*. 2010;26(1):139–140. doi: [10.1093/bioinformatics/btp616](https://doi.org/10.1093/bioinformatics/btp616).
+- <a id="edgeR2"></a>McCarthy DJ, Chen Y, Smyth GK. Differential expression analysis of multifactor RNA-Seq experiments with respect to biological variation. *Nucleic Acids Research*. 2012;40(10):4288–4297. doi: [10.1093/nar/gks042](https://doi.org/10.1093/nar/gks042).
+- <a id="edgeR3"></a>Chen Y, Lun ATL, Smyth GK. From reads to genes to pathways: differential expression analysis of RNA-Seq experiments using Rsubread and the edgeR quasi-likelihood pipeline. *F1000Research*. 201
+- <a id="TMM"></a>Robinson MD, Oshlack A. A scaling normalization method for differential expression analysis of RNA-seq data. *Genome Biology*. 2010;11(3):R25. doi: [10.1186/gb-2010-11-3-r25](https://doi.org/10.1186/gb-2010-11-3-r25).
+
+
+
 
 **WARNING: THIS TUTORIAL IS STILL UNDER CONSTRUCTION.**
