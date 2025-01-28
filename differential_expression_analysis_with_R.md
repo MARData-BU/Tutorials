@@ -187,12 +187,19 @@ dev.off()
 
 ```
 
-As you can see on the plots below, sample *KO_A2* appears as an outlier, which indicates that this sample displays a gene expression quite different than the rest of the samples. In some situations, this could lead to the elimination of this sample from the analysis. You can also see that samples from the WT_B group tend to cluster together, as well as WT_A samples and KO_B samples. 
+As you can see on the plots below, sample *KO_A2* appears as an outlier, which indicates that this sample displays a gene expression quite different than the rest of the samples. In some situations, this could lead to the elimination of this sample from the analysis. You can also see that samples from the WT_B group tend to cluster together, as well as WT_A samples and KO_B samples.
 
 ![dendrograms](https://github.com/MARData-BU/Tutorials/raw/main/Images/pca_dendrogram_mds_example.png)
 
+# 4. Differential expression analysis
+
+```
+library(limma)
+library(edgeR)
 
 
+
+```
 
 # References
 
