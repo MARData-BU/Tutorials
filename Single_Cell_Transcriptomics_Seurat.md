@@ -12,9 +12,7 @@ Júlia Perera-Bel (MARData-BU, Hospital del Mar Research Institute)
     -   <a href="#seurat" id="toc-seurat">Seurat</a>
 -   <a href="#loading-data-and-initial-qc"
     id="toc-loading-data-and-initial-qc">Loading data and initial QC</a>
-    -   <a href="#visualizing-qc-per-cell-and-gene"
-        id="toc-visualizing-qc-per-cell-and-gene">Visualizing QC per cell and
-        gene</a>
+    -   <a href="#visualizing-qc" id="toc-visualizing-qc">Visualizing QC</a>
     -   <a href="#cell-filtering" id="toc-cell-filtering">Cell filtering</a>
 -   <a href="#normalization-and-scaling"
     id="toc-normalization-and-scaling">Normalization and Scaling</a>
@@ -156,24 +154,106 @@ sc <- Read10X_h5(file.path(dir,"raw_feature_bc_matrix.h5"))
 
 # Loading data and initial QC
 
+In this tutorial we will be using scRNASeq data from lamina propia from
+the article by [Martin et
+al](https://pmc.ncbi.nlm.nih.gov/articles/PMC7060942/). The data is
+available under the accession GEO
+[GSE134809](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134809).
+
 ``` r
 # Download dataset
-url <- "http://cf.10xgenomics.com/samples/cell-exp/3.0.0/neuron_3k/neuron_3k_filtered_feature_bc_matrix.tar.gz"
-download.file(url, destfile = "neuron_3k_filtered_feature_bc_matrix.tar.gz")
+data_dir="GSE134809_RAW"
+samples=list.files(data_dir)
+seurat_list=list()
+
+for (name in samples){
+  cat(paste("\n Readding sample", name, "\n", sep = " "))
+  temp_dir <- file.path(data_dir, name)
+  # Now Read10X
+  counts <- Read10X(data.dir = temp_dir)
+  
+  # Create Seurat object
+  seurat_obj <- CreateSeuratObject(counts = counts, project = name, min.cells = 3, min.features = 200)
+  # Add sample info
+  seurat_obj$name <- name
+  # calculate % of mithocondrial RNA
+  seurat_obj$percent.mt <- PercentageFeatureSet(seurat_obj, pattern = "^MT-") 
+  # calculate % of ribosomal RNA
+  seurat_obj$percent.rp <- PercentageFeatureSet(seurat_obj, pattern = "^RPL|^RPS") 
+  
+  # Store it
+  seurat_list[[name]] <- seurat_obj
+  
+}
+
+# Merge all Seurat objects into one
+merged_seurat <- merge(x = seurat_list[[1]], y = seurat_list[2:length(seurat_list)],add.cell.ids = names(seurat_list))
 ```
 
-### Visualizing QC per cell and gene
+Now we will need to add metadata
+
+### Visualizing QC
 
 While generating the `Seurat` object, there were already some quality
 measures calculated for each cell, namely the total UMI counts per cell
 (`nCount_RNA`) and the total number of detected features per cell
-(`nFeature_RNA`). We can plot those in a violin plot and evaluate their
-distribution per sample:
+(`nFeature_RNA`).
+
+-   nFeature: The number of unique genes detected in each cell.
+    Low-quality cells or empty droplets will often have very few genes.
+    Cell doublets or multiplets may exhibit an aberrantly high gene
+    count.
+
+-   nCount: Similarly, the total number of molecules detected within a
+    cell (correlates strongly with unique genes)
+
+We can also calculate other useful metrics and use for filtering cells
+include:
+
+-   Mitochondrial genes: If a cell membrane is damaged, it looses free
+    RNA quicker compared to mitochondrial RNA, because the latter is
+    part of the mitochondrion. A high relative amount of mitochondrial
+    counts can therefore point to damaged cells.
+
+-   Ribosomal genes: Are not rRNA (ribosomal RNA) but is mRNA that code
+    for ribosomal proteins. They do not point to specific issues, but it
+    can be good to have a look at their relative abundance. They can
+    have biological relevance.
+
+All of them can be plot in a violin plot and evaluate their distribution
+per sample:
 
 ``` r
-Seurat::VlnPlot(seu, features = c("nCount_RNA",
-                                  "nFeature_RNA"))
+#head(seurat_obj@meta.data)
+
+VlnPlot(merged_seurat, features=c("percent.mt"), pt.size = 0, group.by = "orig.ident",) + 
+  geom_hline(yintercept = 10, size = 1, linetype = "dashed")+
+  theme(legend.position = 'none', axis.title = element_text(size = 16), axis.text = element_text(size = 12))
 ```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/QC-1.png)<!-- -->
+
+``` r
+VlnPlot(merged_seurat, features=c("percent.rp"), pt.size = 0, group.by = "orig.ident",) + 
+  theme(legend.position = 'none', axis.title = element_text(size = 16), axis.text = element_text(size = 12))
+```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/QC-2.png)<!-- -->
+
+``` r
+VlnPlot(merged_seurat, features=c("nFeature_RNA"), pt.size = 0, group.by = "orig.ident",) + 
+  geom_hline(yintercept = 300, size = 1, linetype = "dashed") + geom_hline(yintercept = 3000, size = 1, linetype = "dashed")+
+  theme(legend.position = 'none', axis.title = element_text(size = 16), axis.text = element_text(size = 12))
+```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/QC-3.png)<!-- -->
+
+``` r
+VlnPlot(merged_seurat, features=c("nCount_RNA"), pt.size = 0, group.by = "orig.ident",) + ylim(0,25000)+
+  theme(legend.position = 'none', axis.title = element_text(size = 16), axis.text = element_text(size = 12))
+```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/QC-4.png)<!-- -->
 
 ### Cell filtering
 
