@@ -2,46 +2,35 @@ Single Cell Transcriptomics with Seurat
 ================
 Júlia Perera-Bel (MARData-BU, Hospital del Mar Research Institute)
 
--   <a href="#introduction-to-single-cell-transcriptomics"
-    id="toc-introduction-to-single-cell-transcriptomics">Introduction to
-    Single Cell Transcriptomics</a>
-    -   <a href="#preprocessing-with-cell-ranger"
-        id="toc-preprocessing-with-cell-ranger">Preprocessing with Cell
-        Ranger</a>
-    -   <a href="#seurat" id="toc-seurat">Seurat</a>
--   <a href="#loading-data-and-initial-qc"
-    id="toc-loading-data-and-initial-qc">Loading data and initial QC</a>
--   <a href="#normalization-and-scaling"
-    id="toc-normalization-and-scaling">Normalization and Scaling</a>
--   <a href="#dimentionality-reduction"
-    id="toc-dimentionality-reduction">Dimentionality reduction</a>
-    -   <a href="#perform-linear-dimensional-reduction"
-        id="toc-perform-linear-dimensional-reduction">Perform linear dimensional
-        reduction</a>
-    -   <a href="#determine-the-dimensionality-of-the-dataset"
-        id="toc-determine-the-dimensionality-of-the-dataset">Determine the
-        ‘dimensionality’ of the dataset</a>
-    -   <a href="#run-non-linear-dimensional-reduction-umaptsne"
-        id="toc-run-non-linear-dimensional-reduction-umaptsne">Run non-linear
-        dimensional reduction (UMAP/tSNE)</a>
--   <a href="#integration" id="toc-integration">Integration</a>
--   <a href="#cell-clustering-and-annotation"
-    id="toc-cell-clustering-and-annotation">Cell clustering and
-    annotation</a>
-    -   <a href="#use-reference-markers" id="toc-use-reference-markers">Use
-        reference markers</a>
-    -   <a href="#cell-type-classification-using-a-reference"
-        id="toc-cell-type-classification-using-a-reference">Cell type
-        classification using a reference</a>
-    -   <a href="#findallmarkers" id="toc-findallmarkers">FindAllMarkers</a>
--   <a href="#differential-expression"
-    id="toc-differential-expression">Differential expression</a>
-    -   <a href="#findmarkers" id="toc-findmarkers">FindMarkers</a>
-    -   <a href="#pseudobulk-differential-expression"
-        id="toc-pseudobulk-differential-expression">Pseudobulk Differential
-        Expression</a>
+  - [Requirements](#requirements)
+  - [Introduction to Single Cell
+    Transcriptomics](#introduction-to-single-cell-transcriptomics)
+      - [Preprocessing with Cell
+        Ranger](#preprocessing-with-cell-ranger)
+      - [Seurat](#seurat)
+  - [Loading data and initial QC](#loading-data-and-initial-qc)
+      - [Visualizing QC](#visualizing-qc)
+      - [Cell filtering](#cell-filtering)
+  - [Normalization and Scaling](#normalization-and-scaling)
+  - [Dimentionality reduction](#dimentionality-reduction)
+      - [Perform linear dimensional
+        reduction](#perform-linear-dimensional-reduction)
+      - [Determine the ‘dimensionality’ of the
+        dataset](#determine-the-dimensionality-of-the-dataset)
+      - [Run non-linear dimensional reduction
+        (UMAP/tSNE)](#run-non-linear-dimensional-reduction-umaptsne)
+  - [Integration](#integration)
+  - [Cell clustering](#cell-clustering)
+  - [Annotation](#annotation)
+      - [Using reference markers](#using-reference-markers)
+      - [Using a reference](#using-a-reference)
+  - [Differential expression](#differential-expression)
+      - [FindAllMarkers and
+        FindMarkers](#findallmarkers-and-findmarkers)
+      - [Pseudobulk Differential
+        Expression](#pseudobulk-differential-expression)
 
-**WARNING: THIS TUTORIAL IS STILL UNDER CONSTRUCTION.** \# Requirements
+# Requirements
 
 This tutorial will be done with R with Seurat 5 R package.
 
@@ -123,8 +112,8 @@ the outs folder. List the contents of this directory with ls -1.
     ├── raw_feature_bc_matrix.h5
     └── web_summary.html
 
-The **web_summary.html** contains a summary of the QC and results of the
-experiment. You can also load the cloupe.cloupe file into the Loupe
+The **web\_summary.html** contains a summary of the QC and results of
+the experiment. You can also load the cloupe.cloupe file into the Loupe
 Browser and start an analysis. The **outs/** directory contains the
 outputs that can be used as input for software tools developed outside
 of 10x Genomics, such as the Seurat R package.
@@ -147,7 +136,7 @@ an obvious knee. Finally, the total UMI count associated with a barcode
 may not, alone, be the best signal to determine if the barcode was
 associated with an empty or damaged cell.
 
-![web_summary](Single_Cell_Transcriptomics_Seurat_files/web_summary.png)
+![web\_summary](Single_Cell_Transcriptomics_Seurat_files/web_summary.png)
 
 There are several tools specifically designed to detect empty or damaged
 droplets, or cells generally deemed to be of “low quality”. We recommend
@@ -165,24 +154,26 @@ count, is the data analysis. The R package Seurat is currently the most
 popular software to do this. To start working with Seurat you can load
 the data in two ways:
 
--   Using the barcodes/features/matrix files:
+  - Using the barcodes/features/matrix files:
 
-<!-- -->
+<!-- end list -->
 
+``` 
 
-    filtered_feature_bc_matrix
-      ├── barcodes.tsv.gz
-      ├── features.tsv.gz
-      └── matrix.mtx.gz
-      
-    raw_feature_bc_matrix
-      ├── barcodes.tsv.gz
-      ├── features.tsv.gz
-      └── matrix.mtx.gz
+filtered_feature_bc_matrix
+  ├── barcodes.tsv.gz
+  ├── features.tsv.gz
+  └── matrix.mtx.gz
+  
+raw_feature_bc_matrix
+  ├── barcodes.tsv.gz
+  ├── features.tsv.gz
+  └── matrix.mtx.gz
+```
 
--   Using h5 files:
+  - Using h5 files:
 
-<!-- -->
+<!-- end list -->
 
     raw_feature_bc_matrix.h5
     filtered_feature_bc_matrix.h5
@@ -204,7 +195,7 @@ available under the accession GEO
 
 ``` r
 # Download dataset
-data_dir="GSE134809_SUBSET"
+data_dir="GSE134809"
 samples=list.files(data_dir,pattern = "GSM")
 metadata=read.delim2(file.path(data_dir,"Metadata.csv"))
 #Creato list to store the data
@@ -300,7 +291,7 @@ used to generate the object in its current state (@commands). Therefore,
 while going through the analysis steps, the same object gets more and
 more of its slots filled.
 
-![seurat_obect](Single_Cell_Transcriptomics_Seurat_files/seurat_object.png)
+![seurat\_obect](Single_Cell_Transcriptomics_Seurat_files/seurat_object.png)
 
 ### Visualizing QC
 
@@ -309,18 +300,18 @@ measures calculated for each cell, namely the total UMI counts per cell
 (`nCount_RNA`) and the total number of detected features per cell
 (`nFeature_RNA`).
 
--   nFeature: The number of unique genes detected in each cell.
+  - nFeature: The number of unique genes detected in each cell.
     Low-quality cells or empty droplets will often have very few genes.
     Cell doublets or multiplets may exhibit an aberrantly high gene
     count.
 
--   nCount: Similarly, the total number of molecules detected within a
+  - nCount: Similarly, the total number of molecules detected within a
     cell (correlates strongly with unique genes)
 
 We can also calculate other useful metrics and use for filtering cells
 include:
 
--   Mitochondrial genes: If a cell membrane is damaged, it looses free
+  - Mitochondrial genes: If a cell membrane is damaged, it looses free
     RNA quicker compared to mitochondrial RNA, because the latter is
     part of the mitochondrion. A high relative amount of mitochondrial
     counts can therefore point to damaged cells.
@@ -339,12 +330,12 @@ VlnPlot(merged_seurat, features=c("nFeature_RNA","nCount_RNA","percent.mt"), pt.
 Based on the QC process we went through we can come to the following
 conclusions:
 
--   Two samples present high mitochondrial gene counts.
--   There are some cells with a very low and very high number of
+  - Two samples present high mitochondrial gene counts.
+  - There are some cells with a very low and very high number of
     features. These might point to non-informative cells and doublets
     respectively.
 
-In the M&M of the publication\], the authors do not describe the
+In the M\&M of the publication\], the authors do not describe the
 thresholds used to filter cells. Observing the distribution of the
 plots, we suggest a threshold of \< 10% mitochondrial counts and \> 200
 features per cell. To filter against possible doublets, here, we also
@@ -421,9 +412,9 @@ highly-expressed genes do not dominate. The results of this are stored
 in <seu$RNA@scale.data> By default, only variable features are scaled.
 
 We can also use the ScaleData() function to remove unwanted sources of
-variation from a single-cell dataset. For example, we could
-`regress out` heterogeneity associated with (for example) cell cycle
-stage, or mitochondrial contamination.
+variation from a single-cell dataset. For example, we could `regress
+out` heterogeneity associated with (for example) cell cycle stage, or
+mitochondrial contamination.
 [Here](https://satijalab.org/seurat/articles/cell_cycle_vignette) you
 can find a tutorial to regress out cell cycle scores.
 
@@ -455,10 +446,12 @@ ScaleData first).
 For the first principal components, Seurat outputs a list of genes with
 the most positive and negative loadings, representing modules of genes
 that exhibit either correlation (or anti-correlation) across
-single-cells in the dataset.
+single-cells in the dataset. These can be visualized by heatmaps:
 
 ``` r
 merged_seurat_filt <- RunPCA(merged_seurat_filt)
+
+DimHeatmap(merged_seurat_filt, dims = 1:6, cells = 500, balanced = TRUE)
 ```
 
 ## Determine the ‘dimensionality’ of the dataset
@@ -489,12 +482,31 @@ co3 <- min(co1, co2) # 11
 
 ## Run non-linear dimensional reduction (UMAP/tSNE)
 
+Non-linear dimensional reduction methods capture complex, non-linear
+relationships between cells that linear methods (like PCA) might miss.
+Two methods are implemented in Seurat:
+
+  - UMAP (Uniform Manifold Approximation and Projection): The goal is to
+    learn the underlying manifold of the data in order to place similar
+    cells together in low-dimensional space. UMAP preserves spatial
+    structure.
+
+  - t-SNE (T-distributed stochastic neighbour embedding): focuses on
+    preserving local similarities while potentially distorting global
+    distances.
+
+<!-- end list -->
+
 ``` r
 merged_seurat_filt <- RunUMAP(merged_seurat_filt, reduction="pca", dims=1:co3, reduction.name = "umap.unintegrated")
 merged_seurat_filt <- RunTSNE(merged_seurat_filt, reduction="pca", dims=1:co3, reduction.name = "tsne.unintegrated")
 
 saveRDS(merged_seurat_filt, file.path(data_dir, "merged_data_filt.Rds"))
 ```
+
+Having a look at the UMAP and t-SNE, can observe that although cells of
+different samples are shared amongst “clusters”, you can still see
+“sample-specific” clusters:
 
 ``` r
 # We can compare between PCA, UMAP and tSNE methods
@@ -515,28 +527,34 @@ DimPlot(merged_seurat_filt, reduction = "tsne.unintegrated")
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/dimplot%20unintegrated-3.png)<!-- -->
 
+Having a look at the UMAP and t-SNE, can observe that although cells of
+different samples are shared amongst “clusters”, you can still see
+“sample-specific” clusters. Separating by technical variables shows
+that Chemistry is introducing a batch effect.
+
 ``` r
 #We can explore the different metadata and identify the need to integrate
-DimPlot(merged_seurat_filt, reduction = "umap.unintegrated",group.by = c("Patient","Chemistry","status"))
+DimPlot(merged_seurat_filt, reduction = "umap.unintegrated",group.by = c("Patient","Chemistry"))
 ```
 
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/dimplot%20unintegrated-4.png)<!-- -->
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/dimplot%20unintegrated%20split-1.png)<!-- -->
 
 # Integration
 
 Seurat v5 enables streamlined integrative analysis using the
-IntegrateLayers function. The method currently supports five integration
-methods. Each of these methods performs integration in low-dimensional
-space, and returns a dimensional reduction (i.e. integrated.rpca) that
-aims to co-embed shared cell types across batches:
+`IntegrateLayers` function. The method currently supports five
+integration methods. Each of these methods performs integration in
+low-dimensional space, and returns a dimensional reduction
+(i.e. `integrated.rpca`) that aims to co-embed shared cell types across
+batches:
 
--   Anchor-based CCA integration (method=CCAIntegration)
--   Anchor-based RPCA integration (method=RPCAIntegration)
--   Harmony (method=HarmonyIntegration)
--   FastMNN (method= FastMNNIntegration)
--   scVI (method=scVIIntegration)
+  - Anchor-based CCA integration (method=CCAIntegration)
+  - Anchor-based RPCA integration (method=RPCAIntegration)
+  - Harmony (method=HarmonyIntegration)
+  - FastMNN (method= FastMNNIntegration)
+  - scVI (method=scVIIntegration)
 
-Note that our anchor-based RPCA integration represents a faster and more
+Note that anchor-based RPCA integration represents a faster and more
 conservative (less correction) method for integration.
 
 ``` r
@@ -548,7 +566,8 @@ dwIntegrated <- IntegrateLayers(
 )
 
 #Run dimensionality reduction on integrated.rpca
-dwIntegrated <- RunUMAP(dwIntegrated, reduction="integrated.rpca", dims=1:co3, reduction.name = "umap.integrated")
+dwIntegrated <- RunUMAP(dwIntegrated, reduction="integrated.rpca", dims=1:co3, 
+                        reduction.name = "umap.integrated")
 
 # save integrated object
 saveRDS(dwIntegrated, file.path(data_dir, "integrated_data.Rds"))
@@ -563,7 +582,7 @@ DimPlot(dwIntegrated, reduction = "umap.integrated",group.by = "Sample_ID")
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/dimplot%20integrated-1.png)<!-- -->
 
 ``` r
-DimPlot(dwIntegrated, reduction = "umap.integrated",group.by = c("Patient","Chemistry","status"))
+DimPlot(dwIntegrated, reduction = "umap.integrated",group.by = c("Patient","Chemistry"))
 ```
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/dimplot%20integrated-2.png)<!-- -->
@@ -573,12 +592,12 @@ DimPlot(dwIntegrated, reduction = "umap.integrated",group.by = c("Patient","Chem
 rm(merged_seurat_filt)
 ```
 
-# Cell clustering and annotation
+# Cell clustering
 
 The method implemented in Seurat first constructs a SNN graph based on
 the euclidean distance in PCA space, and refine the edge weights between
 any two cells based on the shared overlap in their local neighborhoods
-(Jaccard similarity). This step is performed using the FindNeighbors()
+(Jaccard similarity). This step is performed using the `FindNeighbors()`
 function, and takes as input the previously defined dimensionality of
 the dataset.
 
@@ -586,7 +605,7 @@ To cluster the cells, Seurat next implements modularity optimization
 techniques such as the Louvain algorithm (default) or SLM \[SLM, Blondel
 et al., Journal of Statistical Mechanics\], to iteratively group cells
 together, with the goal of optimizing the standard modularity function.
-The FindClusters() function implements this procedure, and contains a
+The `FindClusters()` function implements this procedure, and contains a
 resolution parameter that sets the ‘granularity’ of the downstream
 clustering, with increased values leading to a greater number of
 clusters.
@@ -594,8 +613,14 @@ clusters.
 ``` r
 dwIntegrated <- FindNeighbors(dwIntegrated, reduction="integrated.rpca", dims=1:co3) # reduce k.param and dims to make it quicker
 dwIntegrated <- FindClusters(dwIntegrated, resolution=0.5) # try different resolutions
+
+# Rejoin (collapse) the layers, needed for downstream analysis
+dwIntegrated <- JoinLayers(dwIntegrated, assay = "RNA")
+
 saveRDS(dwIntegrated, file.path(data_dir, "integrated_data.Rds"))
 ```
+
+We look at the resulting clusters in the UMAP:
 
 ``` r
 Idents(dwIntegrated) <- dwIntegrated$seurat_clusters
@@ -604,231 +629,28 @@ DimPlot(dwIntegrated, reduction = "umap.integrated",label=T)
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/clustering-1.png)<!-- -->
 
-``` r
-ggsave("Single_Cell_Transcriptomics_Seurat_files/Dimplot_seurat_clusters.pdf",width = 6,height = 5 )
-```
+# Annotation
 
-## Use reference markers
+## Using reference markers
 
 ``` r
-cat('\n')  
+p=FeaturePlot(dwIntegrated, c("CD4", "CD8A","CD3D", #Limfos
+                        "CD27", #Plasma cells
+                        "GZMB", #NK
+                        "CD68",  #Macrophages
+                        "COL1A1", #Fibros
+                        "EPCAM", #Epithelial
+                        "PECAM1" #Endothelial
+                        ),
+            reduction = "umap.integrated")
+ggsave(file.path(data_dir,"figure-gfm/FeaturePlot.png"),plot = p,width = 8,height = 6)
 ```
 
-``` r
-cat('### Mithochondrial genes and unique genes', '\n') 
-```
-
-### Mithochondrial genes and unique genes
-
-``` r
-FeaturePlot(dwIntegrated, features = c("percent.mt", "nFeature_RNA"),reduction = "umap.integrated")
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-1.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Generic immune cell markers', '\n') 
-```
-
-### Generic immune cell markers
-
-``` r
-FeaturePlot(dwIntegrated, features = c("PTPRC", "ITGAM", "CD3D", "CD19"),reduction = "umap.integrated")
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-2.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### T cells', '\n') 
-```
-
-### T cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("CD3D", "CD4", "CD8A"),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-3.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### B cells', '\n') 
-```
-
-### B cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("CD3D", "CD19"),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-4.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Plasma cells', '\n') 
-```
-
-### Plasma cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("CD27", "CD38","IGHA1","IGHG1"),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-5.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### NK cells', '\n') 
-```
-
-### NK cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("KLRK1", "KLRD1", "PRF1", "GZMB"),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-6.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Monocytes/Macrophages', '\n') 
-```
-
-### Monocytes/Macrophages
-
-``` r
-FeaturePlot(dwIntegrated, features = c("CD68", "CD86", "MRC1", "CD14"),reduction = "umap.integrated")
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-7.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Fibroblasts', '\n') 
-```
-
-### Fibroblasts
-
-``` r
-FeaturePlot(dwIntegrated, features = c("COL1A1", "VIM", "CD248", "PDGFRA", "FAP"),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-8.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Neutrophils', '\n') 
-```
-
-### Neutrophils
-
-``` r
-FeaturePlot(dwIntegrated, features = c("IL1R2", "CXCR2", "MMP9" ),reduction = "umap.integrated") 
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-9.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Epithelial cells', '\n') 
-```
-
-### Epithelial cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("CDH1", "EPCAM", "OCLN", "CLDN3", "CLDN7"),reduction = "umap.integrated")
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-10.png)<!-- -->
-
-``` r
-cat('\n') 
-```
-
-``` r
-cat('\n')  
-```
-
-``` r
-cat('### Endothelial cells', '\n') 
-```
-
-### Endothelial cells
-
-``` r
-FeaturePlot(dwIntegrated, features = c("PECAM1", "CD93", "EGFL7", "CDH5"),reduction = "umap.integrated")
-```
-
-![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_markers-11.png)<!-- -->
-
-``` r
-cat('\n') 
-```
+![web\_summary](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/FeaturePlot.png)
+
+Dotplots are very useful to evaluate markers genes across clusters. They
+depict both the average expression (color) and the percentage of cells
+expressing the gene (size):
 
 ``` r
 # Check Marker Genes with annother visualization
@@ -847,11 +669,34 @@ DotPlot(dwIntegrated, c("CD4", "CD8A", #Tecells
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation_dotplot-1.png)<!-- -->
 
-``` r
-ggsave("Single_Cell_Transcriptomics_Seurat_files/Dotplot_seurat_clusters_markers.pdf",width = 10,height = 5)
-```
+## Using a reference
 
-## Cell type classification using a reference
+When a reference dataset is available, it can be used to analyze query
+datasets through tasks like cell type label transfer and projecting
+query cells onto reference UMAPs. Notably, this does not require
+correction of the underlying raw query data and can therefore be an
+efficient strategy.
+
+Seurat implements the projection of reference data (or meta data) onto a
+query object with the `FindTransferAnchors` and `TransferData`
+functions. After finding anchors, we use the `TransferData()` function
+to classify the query cells based on reference data (a vector of
+reference cell type labels), without modifying the query expression data
+(in contrast to integration methods). `TransferData()` returns a matrix
+with predicted IDs and prediction scores, which we can add to the query
+metadata with `AddMetaData()` function.
+
+The package scRNAseq in Bioconductor is an alternative workflow to
+annotate our dataset with a reference. SingleR identifies marker genes
+from the reference and uses them to compute assignment scores (based on
+the Spearman correlation across markers) for each cell in the test
+dataset against each label in the reference. Due to incompatibilities
+between dependencies with other packages, we do not use it in this
+tutorial, but we acknowledge it as a good alternative.
+
+For this tutorial, we have chosen the `ifnb` dataset as reference. It is
+available in `SeuratData` package an contains annotated PBMC cells. We
+will need to process it before:
 
 ``` r
 library(SeuratData)
@@ -866,9 +711,6 @@ ifnb <- RunPCA(ifnb)
 ifnb <- RunUMAP(ifnb, reduction = "pca", dims = 1:15, reduction.name = "umap.pca")
 DimPlot(ifnb,group.by = "seurat_annotations")
 
-
-dwIntegrated <- JoinLayers(dwIntegrated, assay = "RNA")
-
 ifnb.anchors <- FindTransferAnchors(reference = ifnb, query = dwIntegrated, dims = 1:15,reference.reduction = "pca")
 predictions <- TransferData(anchorset = ifnb.anchors, refdata = ifnb$seurat_annotations, dims = 1:15)
 dwIntegrated <- AddMetaData(dwIntegrated, metadata = predictions)
@@ -876,17 +718,13 @@ dwIntegrated <- AddMetaData(dwIntegrated, metadata = predictions)
 saveRDS(dwIntegrated, file.path(data_dir, "integrated_data.Rds"))
 ```
 
+We can visualize the predicted annotations with the UMAP:
+
 ``` r
 DimPlot(dwIntegrated,group.by = "predicted.id", reduction = "umap.integrated")
 ```
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
-
-``` r
-ggsave("Single_Cell_Transcriptomics_Seurat_files/Dimplot_ifng_annotated.pdf")
-```
-
-    ## Saving 7 x 5 in image
 
 With this information, we are ready to annotate clusters:
 
@@ -908,8 +746,10 @@ new_clusters = c("T cells CD4", #0
 
 
 names(new_clusters) <- levels(dwIntegrated)
-new_clusters <- factor(new_clusters,levels=c("B cells","Plasma cells",  "Endothelial", "Epithelial", "Fibroblasts",
-                                             "Monocytes", "NKs", "T cells", "T cells CD4", "T cells CD8", 
+new_clusters <- factor(new_clusters,levels=c("B cells","Plasma cells",  
+                                             "Endothelial", "Epithelial", "Fibroblasts",
+                                             "Monocytes", 
+                                             "NKs", "T cells", "T cells CD4", "T cells CD8",
                                              "Unknown 1", "Unknown 2"))
 
 
@@ -918,7 +758,10 @@ dwAnnotated$custom_clusters = Idents(dwAnnotated)
 
 # Save annotated object
 saveRDS(dwAnnotated, file.path(data_dir, "integrated_data_annotated.Rds"))
+rm(dwIntegrated)
 ```
+
+We plot the final annotated UMAP:
 
 ``` r
 colors <- c("#CDA087", "#A05555", "#91A096", "#D7D7C8", "#E1D2A5", "#AF7873", 
@@ -929,38 +772,19 @@ DimPlot(dwAnnotated,group.by = "custom_clusters", reduction = "umap.integrated",
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/annotation-1.png)<!-- -->
 
-``` r
-ggsave("Single_Cell_Transcriptomics_Seurat_files/Dimplot_seurat_annotated_v1.pdf")
-```
+The first analysis we can perform is evaluate the cell type proportions
+across samples, and conditions:
 
 ``` r
 library(dplyr)
-```
 
-    ## 
-    ## Attaching package: 'dplyr'
-
-    ## The following objects are masked from 'package:stats':
-    ## 
-    ##     filter, lag
-
-    ## The following objects are masked from 'package:base':
-    ## 
-    ##     intersect, setdiff, setequal, union
-
-``` r
 prop_data <- dwAnnotated@meta.data %>%
   group_by(Sample_ID,Patient,status, custom_clusters) %>%
   summarise(count = n()) %>%
   group_by(Sample_ID) %>%
   mutate(proportion = count / sum(count)) %>%
   ungroup()
-```
 
-    ## `summarise()` has grouped output by 'Sample_ID', 'Patient', 'status'. You can
-    ## override using the `.groups` argument.
-
-``` r
 prop_data$Patient <- as.factor(prop_data$Patient)
 prop_data$Sample_ID <- as.factor(prop_data$Sample_ID)
 
@@ -969,7 +793,7 @@ ggplot(prop_data, aes(x = status, y = proportion, fill = custom_clusters)) +
   geom_bar(stat = "identity", position = "stack") +
   scale_fill_manual(values = colors) +
   facet_wrap(~ Patient, scales = "free_x")+
-  labs(title = "Cell type proportions per sample",
+  labs(title = "Cell type proportions per Patient",
        x = "Sample", y = "Proportion") +
   theme_minimal() 
 ```
@@ -982,14 +806,12 @@ ggplot(prop_data, aes(x = Patient, y = proportion, fill = custom_clusters)) +
   geom_bar(stat = "identity", position = "stack") +
   scale_fill_manual(values = colors) +
   facet_wrap(~ status, scales = "free_x")+
-  labs(title = "Cell type proportions per sample",
+  labs(title = "Cell type proportions per status",
        x = "Sample", y = "Proportion") +
   theme_minimal() 
 ```
 
 ![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/proportions-2.png)<!-- -->
-
-## FindAllMarkers
 
 # Differential expression
 
@@ -1023,11 +845,66 @@ expression towards the non-expressed end. The Seurat tool acknowledges
 this, and by default uses the Wilcoxon rank-sum test to identify
 differentially expressed genes.
 
-## FindMarkers
+## FindAllMarkers and FindMarkers
+
+The function FindAllMarkers performs a Wilcoxon plot to determine the
+genes differentially expressed between each cluster and the rest of the
+cells (eg. cluster 5 vs all other clusters). This is useful for cluster
+annotation, but it takes time and we will not run it now.
+
+Instead, FindMarkers function allows to test for differential gene
+expression analysis specifically between 2 groups of cells, i.e. perform
+pairwise comparisons, eg between cells of cluster 0 vs cluster 2, or
+between cells annotated as T-cells and B-cells.
+
+We will use it to try to annotate the “Unknown” clusters, and to find
+differences between Plasma Cells of Involved and Uninvolved samples.
 
 ``` r
-df <- FindMarkers(dwAnnotated, ident.1 = "Involved", ident.2 = "Uninvolved", only.pos = F, verbose = T, min.pct = 0.1, logfc.threshold = 0.1)
+# Set annotated clusters as main Identity
+Idents(dwAnnotated) <- dwAnnotated$custom_clusters
+Unknown1 <- FindMarkers(dwAnnotated, ident.1 = "Unknown 1",  only.pos = T, verbose = T, min.pct = 0.1, logfc.threshold = 0.25)
+
+
+# Subset Plasma cells
+PC <- subset(dwAnnotated, subset = custom_clusters == "Plasma cells")
+# Set status as main Identity
+Idents(PC) <- PC$status
+PC_de <- FindMarkers(PC, ident.1 = "Involved", ident.2 = "Uninvolved", only.pos = F, verbose = T, min.pct = 0.1, logfc.threshold = 0.1)
+
+# Check how many DEG we get
+sum(PC_de$p_val_adj <  0.05)
+
+saveRDS(PC_de, file.path(data_dir, "PC_de.Rds"))
 ```
+
+The clusterProfiler package provides functions for over-representation
+analysis of gmt files. We will download Hallmark gene sets from the
+MSigDB, This collection summarizes and represents specific well-defined
+biological states or processes and display coherent expression.
+clusterProfiler also implements Gene Ontology gene sets (among other
+functions, including functions for actual GSEA) or KEGG gene sets.
+
+``` r
+library(clusterProfiler)
+hall_url <- "https://data.broadinstitute.org/gsea-msigdb/msigdb/release/2024.1.Hs/h.all.v2024.1.Hs.symbols.gmt"
+# Download the file to a temporary location
+temp_file <- tempfile(fileext = ".gmt")
+download.file(hall_url, temp_file, mode = "wb")
+hall <- read.gmt(temp_file)
+
+# Subset up-regulated genes
+PC_de_up  <- subset(PC_de,
+                    PC_de$avg_log2FC > 1 & PC_de$p_val_adj <  0.05)
+PC_de_up_genes <- rownames(PC_de_up)
+
+# Perform enrichment 
+PC_de_up_genes_HALL <- clusterProfiler::enricher(PC_de_up_genes,TERM2GENE = hall)
+# Visualize significant genesets
+dotplot(PC_de_up_genes_HALL) + ggtitle("dotplot for Hallmark enrichment")
+```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/enrichment-1.png)<!-- -->
 
 ## Pseudobulk Differential Expression
 
@@ -1043,5 +920,19 @@ aggregated across cells, and then these total counts can be treated in
 the same manner as a bulk RNASeq experiment.
 
 ``` r
-pseudobulk <- AggregateExpression(object = dwIntegrated, group.by = c('predicted.id', 'status',"Patient"),return.seurat=T)
+pseudobulk <- AggregateExpression(object = dwAnnotated, group.by = c('custom_clusters', 'status',"Patient"),return.seurat=T)
+
+# Subset Plasma cells
+PC <- subset(pseudobulk, subset = custom_clusters == "Plasma cells")
+
+library(edge)
+y <- DGEList(PC@assays$RNA$counts, samples=PC@meta.data)
+# Set status as main Identity
+Idents(PC) <- PC$status
+
+PC_df <- FindMarkers(PC, ident.1 = "Involved", ident.2 = "Uninvolved", only.pos = F, verbose = T, min.pct = 0.1, logfc.threshold = 0.1,test.use = "DESeq2")
+
+
+# Check how many DEG we get
+sum(na.omit(PC_df$p_val_adj <  0.05))
 ```
