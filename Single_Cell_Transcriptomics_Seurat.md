@@ -193,6 +193,25 @@ al](https://pmc.ncbi.nlm.nih.gov/articles/PMC7060942/). The data is
 available under the accession GEO
 [GSE134809](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134809).
 
+To speed up the tutorial, we will directly download the
+[merged\_seurat.Rds](https://imimes-my.sharepoint.com/:u:/g/personal/jperera_researchmar_net/ESl_nKzWdflKpcWLPHiHAO4B8i_NVfTIenRPmBn1y4M2cw?e=aDuCYb)
+object and save it in a folder called `GSE134809`. Also, in case some
+steps of the tutorial don’t work, we have saved all objects generated in
+the tutorial here: [R
+objects](https://imimes-my.sharepoint.com/:f:/g/personal/jperera_researchmar_net/En6xuKTGzBpHpULPhv5sjtQBbkdJIF1xvxSoWZEJfLaZOA?e=gopUbO)
+
+Load the merged\_seurat.Rds object:
+
+``` r
+data_dir="GSE134809"
+merged_seurat <- readRDS(file.path(data_dir, "merged_data.Rds"))
+```
+
+Alternatively, if you want to learn to load the data from the raw
+cellRanger files, you can download the raw data through this link
+[GSE134809](https://imimes-my.sharepoint.com/:f:/g/personal/jperera_researchmar_net/EiZ5QKkpbDpBvYmiNXTlsK4BzO8Xc34P3in7JOyyPlCz_Q?e=bDJ9DK)
+and then load the data with the following code:
+
 ``` r
 # Download dataset
 data_dir="GSE134809"
@@ -291,7 +310,7 @@ used to generate the object in its current state (@commands). Therefore,
 while going through the analysis steps, the same object gets more and
 more of its slots filled.
 
-![seurat\_obect](Single_Cell_Transcriptomics_Seurat_files/seurat_object.png)
+<img src="Single_Cell_Transcriptomics_Seurat_files/seurat_object.png" width=250 >
 
 ### Visualizing QC
 
@@ -450,9 +469,13 @@ single-cells in the dataset. These can be visualized by heatmaps:
 
 ``` r
 merged_seurat_filt <- RunPCA(merged_seurat_filt)
+```
 
+``` r
 DimHeatmap(merged_seurat_filt, dims = 1:6, cells = 500, balanced = TRUE)
 ```
+
+![](Single_Cell_Transcriptomics_Seurat_files/figure-gfm/pca%20heatmap-1.png)<!-- -->
 
 ## Determine the ‘dimensionality’ of the dataset
 

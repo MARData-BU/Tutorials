@@ -42,6 +42,8 @@ library(Seurat)
 library(ggplot2)
 
 ```
+
+
 # Introduction to Single Cell Transcriptomics
 
 scRNA-seq measures the abundance of mRNA molecules per cell. Extracted biological tissue samples constitute the input for single-cell experiments. Tissues are digested during single-cell dissociation, followed by single-cell isolation to profile the mRNA per cell separately. Plate-based protocols isolate cells into wells on a plate, whereas droplet-based methods capture cells in microfluidic droplets.
@@ -130,8 +132,20 @@ sc <- Read10X_h5(file.path(dir,"raw_feature_bc_matrix.h5"))
 
 In this tutorial we will be using scRNASeq data from lamina propia from the article by [Martin et al](https://pmc.ncbi.nlm.nih.gov/articles/PMC7060942/). The data is available under the accession GEO  [GSE134809](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE134809).
 
-```{r eval=F,warning=FALSE,message=F}
+To speed up the tutorial, we will directly download the [merged_seurat.Rds](https://imimes-my.sharepoint.com/:u:/g/personal/jperera_researchmar_net/ESl_nKzWdflKpcWLPHiHAO4B8i_NVfTIenRPmBn1y4M2cw?e=aDuCYb) object and save it in a folder called `GSE134809`. Also, in case some steps of the tutorial don't work, we have saved all objects generated in the tutorial here: [R objects](https://imimes-my.sharepoint.com/:f:/g/personal/jperera_researchmar_net/En6xuKTGzBpHpULPhv5sjtQBbkdJIF1xvxSoWZEJfLaZOA?e=gopUbO)
 
+
+Load the merged_seurat.Rds object:
+
+```{r echo=T}
+data_dir="GSE134809"
+merged_seurat <- readRDS(file.path(data_dir, "merged_data.Rds"))
+```
+
+Alternatively, if you want to learn to load the data from the raw cellRanger files, you can download the raw data through this link
+[GSE134809](https://imimes-my.sharepoint.com/:f:/g/personal/jperera_researchmar_net/EiZ5QKkpbDpBvYmiNXTlsK4BzO8Xc34P3in7JOyyPlCz_Q?e=bDJ9DK) and then load the data with the following code:
+
+```{r eval=F,warning=FALSE,message=F,collapse=T}
 # Download dataset
 data_dir="GSE134809"
 samples=list.files(data_dir,pattern = "GSM")
@@ -176,11 +190,6 @@ rm(seurat_list,seurat_obj,counts)
 
 ```
 
-```{r echo=F}
-data_dir="GSE134809"
-merged_seurat <- readRDS(file.path(data_dir, "merged_data.Rds"))
-```
-
 Let's explore the Seurat object. 
 
 ```{r }
@@ -196,7 +205,7 @@ Idents(merged_seurat) <- merged_seurat$Sample_ID
 
 Each Seurat object contains exactly the same slots that are specified in the image below. You can get the information inside a slot with `@`, in the same way as you would use the `$` for lists. In addition to the original count table, the Seurat object can therefore store a lot of information that is generated during your analysis, like results of a normalization (`@assays$RNA@data`) a PCA or UMAP (`@reductions`) and the clustering (`@graphs`). It also tracks all the commands that have been used to generate the object in its current state (@commands). Therefore, while going through the analysis steps, the same object gets more and more of its slots filled. 
 
-![seurat_obect](Single_Cell_Transcriptomics_Seurat_files/seurat_object.png)
+<img src="Single_Cell_Transcriptomics_Seurat_files/seurat_object.png" width=250 >
 
 ### Visualizing QC
 
@@ -297,7 +306,9 @@ For the first principal components, Seurat outputs a list of genes with the most
 
 ```{r eval=F}
 merged_seurat_filt <- RunPCA(merged_seurat_filt)
+```
 
+```{r pca heatmap,message=FALSE,warning=F,fig.width=7,fig.height=6}
 DimHeatmap(merged_seurat_filt, dims = 1:6, cells = 500, balanced = TRUE)
 ```
 
@@ -305,10 +316,9 @@ DimHeatmap(merged_seurat_filt, dims = 1:6, cells = 500, balanced = TRUE)
 
 The elbowplot can help you in determining how many PCs to use for downstream analysis such as UMAP, by finding the flattening point (elbow) in which the majority of true signal is captured. However, a useful automatic way to determine the optimal number of principal components (PCs) to retain is depicted below:
 
-```{r eval=T,warning=FALSE,message=FALSE}
+```{r eval=T,warning=FALSE,message=FALSE,fig.width=4,fig.height=3}
 
 ElbowPlot(merged_seurat_filt)
-
 
 # Calculate optimal number of PC to use for the clustering
 pct <- merged_seurat_filt[["pca"]]@stdev / sum(merged_seurat_filt[["pca"]]@stdev) * 100
@@ -341,7 +351,7 @@ saveRDS(merged_seurat_filt, file.path(data_dir, "merged_data_filt.Rds"))
 
 Having a look at the UMAP and t-SNE, can observe that although cells of different samples are shared amongst "clusters", you can still see "sample-specific" clusters:
 
-```{r dimplot unintegrated,message=FALSE,warning=F}
+```{r dimplot unintegrated,message=FALSE,warning=F,collapse=T,fig.width=4,fig.height=3}
 # We can compare between PCA, UMAP and tSNE methods
 DimPlot(merged_seurat_filt, reduction = "pca")
 DimPlot(merged_seurat_filt, reduction = "umap.unintegrated")
@@ -350,7 +360,7 @@ DimPlot(merged_seurat_filt, reduction = "tsne.unintegrated")
 
 Having a look at the UMAP and t-SNE, can observe that although cells of different samples are shared amongst "clusters", you can still see "sample-specific" clusters. Separating by technical variables shows that Chemistry is introducing a batch effect.
 
-```{r dimplot unintegrated split,message=FALSE,warning=F}
+```{r dimplot unintegrated split,message=FALSE,warning=F,fig.width=7,fig.height=4}
 #We can explore the different metadata and identify the need to integrate
 DimPlot(merged_seurat_filt, reduction = "umap.unintegrated",group.by = c("Patient","Chemistry"))
 
